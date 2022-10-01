@@ -1,36 +1,59 @@
+import { useState } from 'react'
+import { format, formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
 import { Avatar } from  './Avatar'
 import { Comment } from './Comment'
 
 import styles from './Post.module.css'
-export function Post() {
-  return (
-    <article className={styles.post}>
-      <header>
-        <div className={styles.author}>
-          <Avatar src="https://github.com/diego3g.png"/>
 
-          <div className={styles.authorInfo}>
-            <strong>Diego Fernandes</strong>
-            <span>CEO Rocketseat</span>
+export function Post({ author, publishedAt, content }) {
+  const [comments, setComments] = useState([1,2])
+
+  function handleCreateNewComment() {
+    event.preventDefault()
+    console.log('Oie')
+
+    setComments([...comments, comments.length + 1]);
+  }
+
+  const publishedDateFormatted = format(publishedAt, "dd 'de' MMMM 'ás' kk:mm'h'",
+  {locale: ptBR})
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true
+  })
+
+  return (
+    <article className={ styles.post }>
+      <header>
+        <div className={ styles.author }>
+          <Avatar src={ author.avatarUrl }/>
+
+          <div className={styles.authorInfo }>
+            <strong>{ author.name }</strong>
+            <span>{ author.role }</span>
           </div>
 
         </div>
 
-        <time title='27 de Setembro publicado ás 20:47' dateTime='2022-09-27 20:47:00'>Públicado há 1h</time>
+        <time title={ publishedDateFormatted  } dateTime={ publishedAt.toISOString() }>
+          { publishedDateRelativeToNow }
+        </time>
       </header>
 
       <div className={styles.content}>
-        <p>Fala Galera 👋 </p>
-        <p>Acabei de subir mais um projeto no meu portifolio. É uma projeto que fiz no NLW return.</p>
-        <p>👉{' '} <a href="">diegoCEO/doctorcare</a></p>
-        <p>
-          <a href="">#novoprojeto</a>{' '}
-          <a href="">#nlw</a>{' '}
-          <a href="">#rockseat</a>  
-        </p>
+        {content.map(line => {
+          if (line.type === 'paragraph') {
+            return <p>{ line.content }</p>
+          }else if (line.type === 'link') {
+            return <p><a href="#"> { line.content } </a></p>
+          }
+        })}
       </div>
 
-      <form className={styles.commentForm}>
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
 
         <textarea
@@ -43,9 +66,9 @@ export function Post() {
       </form>
 
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map(comment => {
+          return <Comment />
+        })}
       </div>
     </article>
   )
