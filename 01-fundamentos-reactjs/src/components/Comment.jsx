@@ -9,6 +9,12 @@ export function Comment({ content, onDeleteComment }) {
 
   const [likeCount, setLikeCount] = useState(0)
 
+  function handleLikeComment() {
+    setLikeCount((state) => {
+      return state + 1
+    });
+  }
+
   function handleDeleteComment() {
     onDeleteComment(content)
   }
@@ -39,7 +45,7 @@ export function Comment({ content, onDeleteComment }) {
         </div>
 
         <footer>
-          <button onClick={() => { setLikeCount(likeCount + 1)}}>
+          <button onClick={handleLikeComment}>
             <ThumbsUp />
             Aplaudir <span> {likeCount} </span>
           </button>
